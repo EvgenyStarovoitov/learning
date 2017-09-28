@@ -5,24 +5,44 @@ var express = require('express'),
     fortune = require('./lib/fortune'),
     MongoClient = require('mongodb').MongoClient,
     url = "mongodb://localhost:27017/test",
+    mongoose = require('mongoose'),
     urlencodedParser = bodyParser.urlencoded({extended: false}),
     Logger = function (req, res, next) {
         console.log('log');
         next();
     };
-    
-MongoClient.connect(url, function(err, db) {
-    if (err) throw err;
-    console.log("Database connected!");
-    db.on('close', function () {
-        console.log('Database is close');
+
+    mongoose.connect(url);
+    var db = mongoose.connection;
+
+    db.on('error', function (err) {
+        console.log('connection error:' + err);
     });
-    db.createCollection("customers", function(err, res) {
-        if (err) throw err;
-        console.log("Collection created!");        
-      });
-    db.close();
+    db.once('open', function () {
+        console.log("Connected to DB!");
+    });
+
+// MongoClient.connect(url, function(err, db) {
+//     if (err) throw err;
+//     database.db = db;
+//     console.log("Database connected on" + " " + url);
+//     db.on('close', function () {
+//         console.log('Database is close');
+//     });
+//     db.createCollection("customers", function(err, res) {
+//     if (err) throw err;
+//     console.log("Collection created!");        
+//     });   
+// });
+
+var Schema = mongoose.Schema;
+
+var UserSchema = new Schema({
+    userName: { type: String, required: true },
+    userAge: { type: Number, required: true },    
 });
+
+var User = mongoose.model('User', UserSchema);
 
 app.engine('handlebars', handlebars.engine); //подключение движка шаблонизатора
 app.disable('x-powered-by');//не отправлять данные о браузере и системе.
@@ -48,6 +68,10 @@ app.get('/sign-in', function (req, res, err) {
 app.post("/register", urlencodedParser, function (req, res) {
     if(!req.body) return res.sendStatus(400);
     console.log(req.body);
+    var use = new User({userName: req.body.userName, userAge: req.body.userAge });
+    console.log(use);
+    db.collection('user').insert(use);
+
     // res.send(`${req.body.userName} - ${req.body.userAge}`);
     res.redirect('/about'); //перенаправление после успешного получения данных на страницу about
 });
