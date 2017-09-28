@@ -4,11 +4,25 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     fortune = require('./lib/fortune'),
     MongoClient = require('mongodb').MongoClient,
+    url = "mongodb://localhost:27017/test",
     urlencodedParser = bodyParser.urlencoded({extended: false}),
     Logger = function (req, res, next) {
         console.log('log');
         next();
     };
+    
+MongoClient.connect(url, function(err, db) {
+    if (err) throw err;
+    console.log("Database connected!");
+    db.on('close', function () {
+        console.log('Database is close');
+    });
+    db.createCollection("customers", function(err, res) {
+        if (err) throw err;
+        console.log("Collection created!");        
+      });
+    db.close();
+});
 
 app.engine('handlebars', handlebars.engine); //подключение движка шаблонизатора
 app.disable('x-powered-by');//не отправлять данные о браузере и системе.
