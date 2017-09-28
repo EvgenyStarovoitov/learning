@@ -3,6 +3,7 @@ var express = require('express'),
     handlebars = require('express-handlebars').create({ defaultLayout:'main' }),
     bodyParser = require('body-parser'),
     fortune = require('./lib/fortune'),
+    MongoClient = require('mongodb').MongoClient,
     urlencodedParser = bodyParser.urlencoded({extended: false}),
     Logger = function (req, res, next) {
         console.log('log');
