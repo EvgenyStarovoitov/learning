@@ -2,47 +2,26 @@ var express = require('express'),
     app = express(),
     handlebars = require('express-handlebars').create({ defaultLayout:'main' }),
     bodyParser = require('body-parser'),
-    fortune = require('./lib/fortune'),
+    fortune = require('./public/lib/fortune'),
     MongoClient = require('mongodb').MongoClient,
     url = "mongodb://localhost:27017/test",
-    mongoose = require('mongoose'),
+    db = require('./public/lib/db'),
     urlencodedParser = bodyParser.urlencoded({extended: false}),
     Logger = function (req, res, next) {
         console.log('log');
         next();
     };
 
-    mongoose.connect(url);
-    var db = mongoose.connection;
-
-    db.on('error', function (err) {
-        console.log('connection error:' + err);
-    });
-    db.once('open', function () {
-        console.log("Connected to DB!");
-    });
-
-// MongoClient.connect(url, function(err, db) {
-//     if (err) throw err;
-//     database.db = db;
-//     console.log("Database connected on" + " " + url);
-//     db.on('close', function () {
-//         console.log('Database is close');
-//     });
-//     db.createCollection("customers", function(err, res) {
-//     if (err) throw err;
-//     console.log("Collection created!");        
-//     });   
-// });
-
-var Schema = mongoose.Schema;
-
-var UserSchema = new Schema({
-    userName: { type: String, required: true },
-    userAge: { type: Number, required: true },    
-});
-
-var User = mongoose.model('User', UserSchema);
+db.connect(url, function(err) {
+    if (err) {
+        console.log('Unable to connect to Mongo.')
+          process.exit(1)
+    } else {
+        app.listen(app.get('port'), function() {
+            console.log('Listening on port: ' +  app.get('port') + '; click ctrl+c to shutdown');
+        });
+    };
+});    
 
 app.engine('handlebars', handlebars.engine); //подключение движка шаблонизатора
 app.disable('x-powered-by');//не отправлять данные о браузере и системе.
@@ -68,25 +47,24 @@ app.get('/sign-in', function (req, res, err) {
 app.post("/register", urlencodedParser, function (req, res) {
     if(!req.body) return res.sendStatus(400);
     console.log(req.body);
-    var use = new User({userName: req.body.userName, userAge: req.body.userAge });
-    console.log(use);
-    db.collection('user').insert(use);
+    var collection = db.get().collection('user');
+    var users = {
+        userName : req.body.userName,
+        userAge : req.body.userAge,
+        date : new Date().toString()
+    };
+    console.log(users);
+    collection.insert(users);
 
     // res.send(`${req.body.userName} - ${req.body.userAge}`);
     res.redirect('/about'); //перенаправление после успешного получения данных на страницу about
 });
 // пользовательская страница 404 - not found
 app.use(function(req, res, next){
-    res.status(404);
-    res.render('404');
+    res.status(404), res.render('404');
 });
 // пользовательская страница 500 - server error
 app.use(function(err, req, res, next){
     console.error(err.stack);
-    res.status(500);
-    res.render('500');
-});
-
-app.listen(app.get('port'), function(){
-    console.log( 'Express запущен на http://localhost:' + app.get('port') + '; нажмите Ctrl+C для завершения.' );
+    res.status(500), res.render('500');
 });
