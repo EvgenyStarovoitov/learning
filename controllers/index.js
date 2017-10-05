@@ -17,10 +17,14 @@ router.use('/notes', require('../controllers/notes'));
 //     });
 // });
 
+
 router.get('/', function(req, res) {
     note.all(function(err, notes) {
         res.render('home', {notes: notes})
     });
+});
+router.get('/about', function(req, res, err){
+    res.render('about');
 });
 
 module.exports = router;
