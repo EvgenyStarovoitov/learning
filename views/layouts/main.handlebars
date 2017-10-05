@@ -9,14 +9,14 @@
         <div class="row row_border">
             <div class="col col-2">
                 <div class="control-panel">
-                      <a href="" class="control-panel__add-note control-panel__elem"></a>
-                      <a href="" class="control-panel__del-note control-panel__elem"></a>
-                      <a href="" class="control-panel__upd-note control-panel__elem"></a>
+                    <a href="" class="control-panel__add-note control-panel__elem"></a>
+                    <a href="" class="control-panel__del-note control-panel__elem"></a>
+                    <a href="" class="control-panel__upd-note control-panel__elem"></a>
+                    <a href="" class="control-panel__show-note control-panel__elem"></a>
                 </div>
             </div>
             <div class="col col-2 col_right">
                 <div class="contact">
-                    {{!-- <img src="/img/mail_1.png" alt="contact" class="contact__logo"> --}}
                     <a href="" class="contact__link">Contact</a>
                 </div>
                 <div class="auth">
@@ -29,9 +29,10 @@
         </div>
         <div class="row">
             <div class="col col-1 col_bg_blue">
-                There Notes
+                {{{notes}}}
+                {{!-- {{{note-all}}} --}}
             </div>
-            <div class="col col-4 col_center col_bg_grey">
+            <div class="col col-4 col_bg_grey">
                  {{{body}}}
             </div>
         </div>

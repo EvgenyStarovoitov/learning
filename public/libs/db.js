@@ -3,7 +3,7 @@ var MongoClient = require('mongodb').MongoClient
 var state = {
   db: null,
 };
-
+//done = cb func
 exports.connect = function(url, done) {
   if (state.db) return done();
   MongoClient.connect(url, function(err, db){
@@ -11,6 +11,13 @@ exports.connect = function(url, done) {
     state.db = db;
     done();
   });
+};
+
+exports.save = function (collect, doc, done) {
+  if (state.db){
+    collect.save(doc);
+  };
+  done();
 };
 
 exports.get = function() {

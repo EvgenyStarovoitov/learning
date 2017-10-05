@@ -6,6 +6,7 @@ var express = require('express'),
     MongoClient = require('mongodb').MongoClient,
     url = "mongodb://localhost:27017/test",
     db = require('./public/libs/db'),
+    controllers = require('./controllers/index'), // input for other controllers
     urlencodedParser = bodyParser.urlencoded({extended: false}), // для обработки форм в URL кодировки
     Logger = function (req, res, next) {
         console.log('log');
@@ -29,11 +30,8 @@ app.set('view engine', 'handlebars'); // выбираем движок пред�
 app.set('port', process.env.PORT || 3000);//присваивание значения имени значения port, можно было просто написать 3000 или сохранить в переменную нмоер порта и вызвать в app.listen
 
 app.use(Logger); // промежуточный обработчик который при каждом запросе делает log
-app.use(express.static(__dirname + '/public'));//промежуточный обработчки который указывает откуда брать статичные файлы с аргументов express.static(root, [options])
-
-app.get('/',function (req, res, err) {
-   res.render('home');  
-});
+app.use(express.static(__dirname + '/public'));//промежуточный обработчки который указывает откуда брать статичные файлы с аргументов express.static(root, [options])   
+app.use(controllers);
 
 app.get('/about', function(req, res, err){
     res.render('about', { fortune: fortune.getFortune});
@@ -49,9 +47,7 @@ app.post("/register", urlencodedParser, function (req, res) {
         date : new Date().toString()
     };
     console.log(users);
-    collection.insert(users);
-
-    // res.send(`${req.body.userName} - ${req.body.userAge}`);
+    collection.save(users);
     res.redirect('/about'); //перенаправление после успешного получения данных на страницу about
 });
 // пользовательская страница 404 - not found

@@ -1,12 +1,18 @@
 <div class="header">
-    <h1>Wassuuuuuuppp!!!!</h1>
     <p>Твое предсказание на сегодня:</p>
-    <blockquote>{{fortune}}</blockquote>
+        {{!-- {{fortune}} --}}
     <form action="/register" method="post">
         <label>Имя</label><br>
         <input type="text" name="userName" /><br><br>
         <label>Возраст</label><br>
         <input type="number" name="userAge" /><br><br>
         <input type="submit" value="Отправить" />
+    </form>
+</div>
+
+<div class="note-add">
+    <form action="/note/add" method="post">
+        <textarea name="userNote" id="" cols="30" rows="10" placeholder="Add note......"></textarea>
+        <input type="submit" value="Сохранить" class="button"/>
     </form>
 </div>
