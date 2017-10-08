@@ -6,7 +6,6 @@ var express = require('express'),
     MongoClient = require('mongodb').MongoClient,
     url = "mongodb://localhost:27017/test",
     db = require('./public/libs/db'),
-    logger = require('./middlewares/logger'),
     controllers = require('./controllers/index'), // input for other controllers
     urlencodedParser = bodyParser.urlencoded({extended: false}); // для обработки форм в URL кодировки
 
@@ -29,21 +28,20 @@ app.set('port', process.env.PORT || 3000);//присваивание значе�
 
 app.use(express.static(__dirname + '/public'));//промежуточный обработчки который указывает откуда брать статичные файлы с аргументов express.static(root, [options])   
 app.use(controllers);
-app.use(logger); // промежуточный обработчик который при каждом запросе делает log
 
-app.post("/register", urlencodedParser, function (req, res) {
-    if(!req.body) return res.sendStatus(400);
-    console.log(req.body);
-    var collection = db.get().collection('user');
-    var users = {
-        userName : req.body.userName,
-        userAge : req.body.userAge,
-        date : new Date().toString()
-    };
-    console.log(users);
-    collection.save(users);
-    res.redirect('/about'); //перенаправление после успешного получения данных на страницу about
-});
+// app.post("/register", urlencodedParser, function (req, res) {
+//     if(!req.body) return res.sendStatus(400);
+//     console.log(req.body);
+//     var collection = db.get().collection('user');
+//     var users = {
+//         userName : req.body.userName,
+//         userAge : req.body.userAge,
+//         date : new Date().toString()
+//     };
+//     console.log(users);
+//     collection.save(users);
+//     res.redirect('/about'); //перенаправление после успешного получения данных на страницу about
+// });
 // пользовательская страница 404 - not found
 app.use(function(req, res, next){
     res.status(404), res.render('404');

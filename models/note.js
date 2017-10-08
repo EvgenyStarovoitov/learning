@@ -12,12 +12,12 @@ exports.create = function( userNote, cb) {
 };
 
 // Get a particular note
-exports.get = function(id, cb) {
-    db.fetch({id:id}, function(err, docs) {
-        if (err) return cb(err);
-        cb(null, docs)
-    });
-};
+// exports.get = function(id, cb) {
+//     db.fetch({id:id}, function(err, docs) {
+//         if (err) return cb(err);
+//         cb(null, docs)
+//     });
+// };
 
 // Get all notes
 exports.all = function(cb) {
@@ -25,11 +25,19 @@ exports.all = function(cb) {
     var collection = db.get().collection('notes');
     collection.find({ }).toArray(function(err, docs) {
         if(err) return cb(err);
-        cb(null, docs);
+        var arr = [];
+        // using forEach with the rigth key
+        docs.forEach(function (el) {
+            arr.push(el.userNote);
+        });
+        // console.log(arr);
+        cb(null, arr);
+        // console.log(docs);
+        // cb(null, docs);
     });
 };
 
 // Get all notes by a particular user
-exports.allByUser = function(user, cb) {
-    db.fetch({user: user}, cb);
-};
+// exports.allByUser = function(user, cb) {
+//     db.fetch({user: user}, cb);
+// };

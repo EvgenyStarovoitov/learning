@@ -6,6 +6,7 @@ var express = require('express')
 
 // other controllers like users, notes, comments
 router.use('/notes', require('../controllers/notes'));
+// router.use('/', require('../middlewares/logger'));
 
 // router.post('/note/add/some', urlencodedParser, function (req, res) {
 //     console.log(req.body);
